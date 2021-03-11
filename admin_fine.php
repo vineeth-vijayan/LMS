@@ -87,7 +87,11 @@
   </div>
   <br>
   <div class="input-append" align="right" style="margin-right:35px;">
-    <input type="text" placeholder="Enter Student Rollno" id="" name=""/>
+    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
+      <option value="RollNo">RollNo</option>
+      <option value="Student Name">Student Name</option>
+    </select>
+    <input type="text" placeholder="search by" id="" name=""/>
     <button class="btn btn-info">Search</button>
   </div>
   <br>

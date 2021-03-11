@@ -80,13 +80,6 @@
       <hr>
     </div>
   </div>
-  <br>
-  <div class="input-append" align="right" style="margin-right:35px;">
-    <input type="text" placeholder="Enter Student Rollno" id="" name=""/>
-    <button class="btn btn-info">Search</button>
-  </div>
-
-  <br>
   <div class="row content" align="center">
     <div class="col-sm-2 text-left">
     </div>

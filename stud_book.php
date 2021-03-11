@@ -82,7 +82,13 @@
   </div>
   <br>
   <div class="input-append" align="right" style="margin-right:35px;">
-    <input type="text" placeholder="Enter Book Name" id="" name=""/>
+    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
+      <option value="BookID">BookID</option>
+      <option value="BookName">Book Name</option>
+      <option value="Author">Author</option>
+      <option value="Publisher">Publisher</option>
+    </select>
+    <input type="text" placeholder="search by" id="" name=""/>
     <button class="btn btn-info">Search</button>
   </div>
 
@@ -135,6 +141,17 @@
     </div>
   </div>
   <br>
+  <div class="input-append" align="right" style="margin-right:35px;">
+    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
+      <option value="BookID">BookID</option>
+      <option value="BookName">Book Name</option>
+      <option value="Author">Author</option>
+      <option value="Publisher">Publisher</option>
+    </select>
+    <input type="text" placeholder="search by" id="" name=""/>
+    <button class="btn btn-info">Search</button>
+  </div>
+
   <br>
   <div class="row content" align="center">
     <div class="col-sm-2 text-left">
