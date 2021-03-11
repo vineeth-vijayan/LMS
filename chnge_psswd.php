@@ -14,8 +14,8 @@
 	                    <div class="login-space">
                         <br><br>
 	                        <div class="login">
-	                            <div class="group"> <label for="user" class="label">New Password</label> <input id="student_user" type="text" class="input" placeholder="Enter Password"> </div>
-	                            <div class="group"> <label for="pass" class="label">Retype Password</label> <input id="student_pass" type="password" class="input" data-type="password" placeholder="Retype Password"> </div>
+	                            <div class="group"> <label for="new_pass" class="label">New Password</label> <input id="new_pass" name="new_pass" type="password" class="input" placeholder="Enter Password"> </div>
+	                            <div class="group"> <label for="confirm_pass" class="label">Retype Password</label> <input id="confirm_pass" name="confirm_pass" type="password" class="input" placeholder="Retype Password"> </div>
 	                            <div class="group"> <input type="submit" class="button" value="Change Password"> </div>
 	                            <div class="hr"></div>
 	                        </div>
