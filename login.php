@@ -82,7 +82,6 @@
 	                        <div class="login">
 	                            <div class="group"> <label class="label">Username</label> <input name="stud_user" type="text" class="input" placeholder="Enter your roll number"> </div>
 	                            <div class="group"> <label class="label">Password</label> <input name="stud_pass" type="password" class="input" data-type="password" placeholder="Enter your password"> </div>
-	                            <div class="group"> <input id="check1" type="checkbox" checked> <label for="check1" style="color:white;"> Keep me Signed in</label> </div>
 	                            <div class="group"> <input type="submit" name="stud_login" class="button" value="Sign In"> </div>
 	                            <div class="hr"></div>
 	                            <div class="foot"> <a href="stud_reg.php" style="color:white;">Register</a> </div>
@@ -93,7 +92,6 @@
                           <div class="sign-up-form">
                             <div class="group"> <label class="label">Username</label> <input name="admin_user" type="text" class="input" placeholder="Enter your username"> </div>
                             <div class="group"> <label class="label">Password</label> <input name="admin_pass" type="password" class="input" data-type="password" placeholder="Enter your password"> </div>
-                            <div class="group"> <input id="check2" type="checkbox" checked> <label for="check2" style="color:white;"> Keep me Signed in</label> </div>
                             <div class="group"> <input type="submit" name="admin_login" class="button" value="Sign In"> </div>
                             <div class="hr"></div>
 	                        </div>
