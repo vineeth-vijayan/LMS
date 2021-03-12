@@ -1,3 +1,11 @@
+<?php
+  session_start();
+  if(!isset($_SESSION['admin_user'])){
+    header('location:login.php');
+  }
+  include_once("config.php");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,9 +33,49 @@
       height: 100%;
     }
   </style>
+  <script>
+    document.getElementById("book_name").value="Oliver Twist";
+    document.getElementById("stud_name").value="Amaya Vinod";
+  </script>
 </head>
 <body>
-
+<?php
+  if(isset($_REQUEST["issue_book"])){
+    $bid = $_REQUEST["book_id"];
+    $roll = $_REQUEST["stud_rollno"];
+    $date = $_REQUEST["issue_date"];
+    $query = "SELECT * FROM Book WHERE book_id='".$bid."'";
+    $result = mysqli_query($con, $query);
+    if(mysqli_num_rows($result)==1){
+      $row = mysqli_fetch_array($result);
+      if($row['issued']==1){
+        $error = "<script>alert('Book Already Issued!!Check BookID!!....');</script>";
+      }
+      else{
+        $query = "SELECT * FROM Student WHERE stud_rollno='".$roll."'";
+        $result = mysqli_query($con, $query);
+        if(mysqli_num_rows($result)==1){
+          $query = "INSERT INTO BookIssue(book_id, stud_rollno, issue_date, fine) VALUES('".$bid."', '".$roll."', '".$date."', 0)";
+          if(mysqli_query($con, $query)){
+            $error = "<script>alert('Issued Successfully!!.....');</script>";
+            $query = "UPDATE Book SET issued=1 WHERE book_id='".$bid."'";
+            mysqli_query($con, $query);
+          }
+          else{
+            $error = "<script>alert('Something went wrong!!.....');</script>";
+          }
+        }
+        else{
+          $error = "<script>alert('Student Not Found!!....');</script>";
+        }
+      }
+    }
+    else{
+      $error = "<script>alert('Book Not Found!!....');</script>";
+    }
+    echo $error;
+  }
+?>
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -65,36 +113,58 @@
     </div>
   </div>
   <div class="row content" style="margin-top:-20%;">
-    <div class="col-sm-2 text-left">
-    </div>
-    <div class="col-sm-10 text-left">
+    <div class="col-sm-12 text-left">
       <div class="form-group row">
-        <div class="col-xs-2">
-          <label for="ex2">BookID</label>
-          <input class="form-control" id="ex2" type="text">
-        </div>
-        <div class="col-xs-2">
-          <label for="ex2">Student Rollno</label>
-          <input class="form-control" id="ex2" type="text">
-        </div>
-        <div class="col-xs-2">
-          <label for="ex2">BookName</label>
-          <input class="form-control" id="ex2" type="text" readonly>
-        </div>
-        <div class="col-xs-2">
-          <label for="ex2">Student Name</label>
-          <input class="form-control" id="ex2" type="text" readonly>
-        </div>
-        <div class="col-xs-2">
-          <label for="date">Issue Date</label>
-          <input id="date" class="form-control" type="date">
-          <script>
-            document.getElementById('date').valueAsDate = new Date();
-          </script>
-        </div>
-        <div class="col-xs-2" style="margin-top:2%;">
-          <button class="btn btn-success" type="button" name="add">Issue</button>
-        </div>
+        <form action="" method="POST">
+          <div class="col-xs-2">
+            <label for="ex2">BookID</label>
+            <input class="form-control" id="book_id" name="book_id" type="text">
+          </div>
+          <div class="col-xs-2">
+            <label for="ex2">Student Rollno</label>
+            <input class="form-control" id="stud_rollno" name="stud_rollno" type="text">
+          </div>
+          <div class="col-xs-2">
+            <label for="ex2">Book Title</label>
+            <input class="form-control" id="book_name" name="book_name" type="text" disabled>
+          </div>
+          <div class="col-xs-2">
+            <label for="ex2">Student Name</label>
+            <input class="form-control" id="stud_name" name="stud_name" type="text" readonly>
+          </div>
+          <?php
+            if(isset($_REQUEST["show"])){
+              $bid = $_REQUEST["book_id"];
+              $roll = $_REQUEST["stud_rollno"];
+              $msg = '<script>document.getElementById("book_id").value="'.$bid.'";document.getElementById("stud_rollno").value="'.$roll.'";';
+              $query = "SELECT * FROM Book WHERE book_id='".$bid."'";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)==1){
+                $row = mysqli_fetch_array($result);
+                $msg .= 'document.getElementById("book_name").value="'.$row["book_title"].'";';
+              }
+              $query = "SELECT * FROM Student WHERE stud_rollno='".$roll."'";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)==1){
+                $row = mysqli_fetch_array($result);
+                $msg .= 'document.getElementById("stud_name").value="'.$row["stud_name"].'";';
+              }
+              $msg .= "</script>";
+              echo $msg;
+            }
+          ?>
+          <div class="col-xs-2">
+            <label for="date">Issue Date</label>
+            <input id="issue_date" name="issue_date" class="form-control" type="date">
+            <script>
+              document.getElementById('issue_date').valueAsDate = new Date();
+            </script>
+          </div>
+          <div class="col-xs-2" style="margin-top:2%;">
+            <button class="btn btn-info" type="submit" name="show">Show Details</button>
+            <button class="btn btn-success" type="submit" name="issue_book">Issue</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>
