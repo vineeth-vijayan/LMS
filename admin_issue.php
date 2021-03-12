@@ -33,10 +33,6 @@
       height: 100%;
     }
   </style>
-  <script>
-    document.getElementById("book_name").value="Oliver Twist";
-    document.getElementById("stud_name").value="Amaya Vinod";
-  </script>
 </head>
 <body>
 <?php
@@ -132,33 +128,36 @@
             <label for="ex2">Student Name</label>
             <input class="form-control" id="stud_name" name="stud_name" type="text" readonly>
           </div>
-          <?php
-            if(isset($_REQUEST["show"])){
-              $bid = $_REQUEST["book_id"];
-              $roll = $_REQUEST["stud_rollno"];
-              $msg = '<script>document.getElementById("book_id").value="'.$bid.'";document.getElementById("stud_rollno").value="'.$roll.'";';
-              $query = "SELECT * FROM Book WHERE book_id='".$bid."'";
-              $result = mysqli_query($con, $query);
-              if(mysqli_num_rows($result)==1){
-                $row = mysqli_fetch_array($result);
-                $msg .= 'document.getElementById("book_name").value="'.$row["book_title"].'";';
-              }
-              $query = "SELECT * FROM Student WHERE stud_rollno='".$roll."'";
-              $result = mysqli_query($con, $query);
-              if(mysqli_num_rows($result)==1){
-                $row = mysqli_fetch_array($result);
-                $msg .= 'document.getElementById("stud_name").value="'.$row["stud_name"].'";';
-              }
-              $msg .= "</script>";
-              echo $msg;
-            }
-          ?>
+
           <div class="col-xs-2">
             <label for="date">Issue Date</label>
             <input id="issue_date" name="issue_date" class="form-control" type="date">
             <script>
               document.getElementById('issue_date').valueAsDate = new Date();
             </script>
+            <?php
+              if(isset($_REQUEST["show"])){
+                $bid = $_REQUEST["book_id"];
+                $roll = $_REQUEST["stud_rollno"];
+                $date = $_REQUEST["issue_date"];
+                $msg = '<script>document.getElementById("book_id").value="'.$bid.'";document.getElementById("stud_rollno").value="'.$roll.'";';
+                $query = "SELECT * FROM Book WHERE book_id='".$bid."'";
+                $result = mysqli_query($con, $query);
+                if(mysqli_num_rows($result)==1){
+                  $row = mysqli_fetch_array($result);
+                  $msg .= 'document.getElementById("book_name").value="'.$row["book_title"].'";';
+                }
+                $query = "SELECT * FROM Student WHERE stud_rollno='".$roll."'";
+                $result = mysqli_query($con, $query);
+                if(mysqli_num_rows($result)==1){
+                  $row = mysqli_fetch_array($result);
+                  $msg .= 'document.getElementById("stud_name").value="'.$row["stud_name"].'";';
+                }
+                $msg .= "document.getElementById('issue_date').value = '".$date."';";
+                $msg .= "</script>";
+                echo $msg;
+              }
+            ?>
           </div>
           <div class="col-xs-2" style="margin-top:2%;">
             <button class="btn btn-info" type="submit" name="show">Show Details</button>
