@@ -23,7 +23,7 @@
     }
   }
 
-  elseif ($_SESSION['stud_rollno']) {
+  elseif (isset($_SESSION['stud_rollno'])) {
     $username = $_SESSION['stud_rollno'];
     if(isset($_REQUEST['change_pwd'])){
       if($_REQUEST['new_pass']==$_REQUEST['confirm_pass']){
