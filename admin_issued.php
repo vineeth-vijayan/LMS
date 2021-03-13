@@ -1,3 +1,10 @@
+<?php
+  session_start();
+  if(!isset($_SESSION['admin_user'])){
+    header('location:login.php');
+  }
+  include_once('config.php');
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -86,16 +93,17 @@
     </div>
   </div>
   <br>
-  <div class="input-append" align="right" style="margin-right:35px;">
-    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
-      <option value="BookID">BookID</option>
-      <option value="Book Name">Book Name</option>
-      <option value="RollNo">RollNo</option>
-      <option value="Student Name">Student Name</option>
-    </select>
-    <input type="text" placeholder="search by" id="" name=""/>
-    <button class="btn btn-info">Search</button>
-  </div>
+  <form class="" action="" method="post">
+    <div class="input-append" align="right" style="margin-right:35px;">
+      <select size="1" name="select" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="BookID">BookID</option>
+        <option value="RollNo">RollNo</option>
+      </select>
+      <input type="text" placeholder="search by" id="searchby" name="searchby"/>
+      <button class="btn btn-info" name="search">Search</button>
+    </div>
+  </form>
+
   <br>
   <div class="row content">
     <div class="col-sm-2 text-left">
@@ -108,25 +116,51 @@
           <th>Issued Date</th>
           <th>Returned Date</th>
         </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-      </table>
+        <?php
+          if(isset($_REQUEST['search'])){
+            $index = 1;
+            $msg = "";
+            $value = $_REQUEST['searchby'];
+            if($_REQUEST['select']=='BookID'){
+              $var = 'book_id';
+            }
+            else{
+              $var = 'stud_rollno';
+            }
+            $query = "SELECT * FROM BookIssue WHERE return_date IS NOT NULL AND ".$var."='".$value."'";
+            $result = mysqli_query($con, $query);
+            if(mysqli_num_rows($result)>0){
+              while($row = mysqli_fetch_assoc($result)){
+                $msg .= "<tr id='".$index."'>
+                            <td class='row-data'>".$row['book_id']."</td>
+                            <td class='row-data'>".$row['stud_rollno']."</td>
+                            <td>".date("d/m/Y", strtotime($row['issue_date']))."</td>
+                            <td>".date("d/m/Y", strtotime($row['return_date']))."</td>
+                          </tr>";
+              }
+
+            }
+          }
+          else{
+            $index = 1;
+            $msg = "";
+            $query = "SELECT * FROM BookIssue WHERE return_date IS NOT NULL";
+            $result = mysqli_query($con, $query);
+            if(mysqli_num_rows($result)>0){
+              while($row = mysqli_fetch_assoc($result)){
+                $msg .= "<tr id='".$index."'>
+                            <td class='row-data'>".$row['book_id']."</td>
+                            <td class='row-data'>".$row['stud_rollno']."</td>
+                            <td>".date("d/m/Y", strtotime($row['issue_date']))."</td>
+                            <td>".date("d/m/Y", strtotime($row['return_date']))."</td>
+                          </tr>";
+              }
+
+            }
+          }
+          $msg.="<table>";
+          echo $msg;
+        ?>
     </div>
     <div class="col-sm-2 text-left">
     </div>
