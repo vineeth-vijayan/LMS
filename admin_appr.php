@@ -9,6 +9,7 @@
 <html lang="en" dir="ltr">
 <head>
   <title>Library Management System</title>
+  <link rel="icon" type="image/png" href="assets/image/logo2.png">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
@@ -75,7 +76,6 @@
         <li><a href="admin_return.php">Return Book</a></li>
         <li><a href="admin_issued.php">Issued Book</a></li>
         <li class="active"><a href="">Approvals</a></li>
-        <li><a href="admin_fine.php">Fines</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="chnge_psswd.php"><span class="glyphicon glyphicon-lock"></span> Change Password</a></li>
