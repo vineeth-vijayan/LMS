@@ -50,7 +50,7 @@
       <ul class="nav navbar-nav">
         <li class="active"><a href="">Home</a></li>
         <li><a href="stud_book.php">Books</a></li>
-        <li><a href="stud_fine.php">Fine</a></li>
+        <li><a href="stud_issued.php">Issued Book</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="chnge_psswd.php"><span class="glyphicon glyphicon-lock"></span> Change Password</a></li>

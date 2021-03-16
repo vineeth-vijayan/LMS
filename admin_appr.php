@@ -1,3 +1,10 @@
+<?php
+  session_start();
+  if(!isset($_SESSION['admin_user'])){
+    header('location:login.php');
+  }
+  include_once('config.php');
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -77,7 +84,22 @@
     </div>
   </div>
 </nav>
-
+<?php
+  if(isset($_REQUEST['approve'])){
+    $rollno = $_REQUEST['rollno'];
+    $query = "UPDATE Student SET approval_status=1 WHERE stud_rollno='".$rollno."'";
+    mysqli_query($con, $query);
+    $msg = "<script>alert('Student Record Approved Successfully!!');</script>";
+    echo $msg;
+  }
+  if(isset($_REQUEST['delete'])){
+    $rollno = $_REQUEST['rollno'];
+    $query = "DELETE FROM Student WHERE stud_rollno='".$rollno."'";
+    mysqli_query($con, $query);
+    $msg = "<script>alert('Student Record Deleted Successfully!!');</script>";
+    echo $msg;
+  }
+?>
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-12 text-left">
@@ -86,41 +108,96 @@
     </div>
   </div>
   <br>
-  <br>
-  <div class="row content">
-    <div class="col-sm-2 text-left">
+  <form class="" action="" method="post">
+    <div class="input-append" align="right" style="margin-right:35px;">
+      <select size="1" name="select" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="RollNo">RollNo</option>
+        <option value="Student Name">Student Name</option>
+      </select>
+      <input type="text" placeholder="search by" id="searchby" name="searchby"/>
+      <button class="btn btn-info" name="search">Search</button>
     </div>
-    <div class="col-sm-8 text-left">
-      <table>
-        <tr>
-          <th>Rollno</th>
-          <th>Student Name</th>
-          <th>EmailID</th>
-          <th width="35%"></th>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>&nbsp;&nbsp;<button class="btn btn-success" type="button" name="delete">Approve</button>&nbsp;&nbsp;<button class="btn btn-danger" type="button" name="delete">Delete</button></td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>&nbsp;&nbsp;<button class="btn btn-success" type="button" name="delete">Approve</button>&nbsp;&nbsp;<button class="btn btn-danger" type="button" name="delete">Delete</button></td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>&nbsp;&nbsp;<button class="btn btn-success" type="button" name="delete">Approve</button>&nbsp;&nbsp;<button class="btn btn-danger" type="button" name="delete">Delete</button></td>
-        </tr>
-      </table>
+    <br>
+    <div class="row content">
+      <div class="col-sm-2 text-left">
+      </div>
+      <div class="col-sm-8 text-left">
+        <input type="hidden" id="rollno" name="rollno">
+        <table>
+          <tr>
+            <th>Rollno</th>
+            <th>Student Name</th>
+            <th>EmailID</th>
+            <th>Mobile</th>
+            <th width="35%"></th>
+          </tr>
+          <?php
+            if(isset($_REQUEST['search'])){
+              $index = 1;
+              $msg = "";
+              $value = $_REQUEST['searchby'];
+              if($_REQUEST['select']=='RollNo'){
+                $var = 'stud_rollno';
+              }
+              else{
+                $var = 'stud_name';
+              }
+              $query = "SELECT * FROM Student WHERE approval_status = 0 AND $var='".$value."'";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $msg .= "<tr id='".$index."'>
+                              <td class='row-data'>".$row['stud_rollno']."</td>
+                              <td class='row-data'>".$row['stud_name']."</td>
+                              <td class='row-data'>".$row['stud_email']."</td>
+                              <td class='row-data'>".$row['stud_mob']."</td>
+                              <td>
+                                <button class='btn btn-success' type='submit' name='approve' onclick='show()'>Approve</button>&nbsp;
+                                <button class='btn btn-danger' type='submit' name='delete' onclick='show()'>Delete</button>
+                              </td>
+                            </tr>";
+                }
+
+              }
+            }
+            else{
+              $index = 1;
+              $msg = "";
+              $query = "SELECT * FROM Student WHERE approval_status = 0";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $msg .= "<tr id='".$index++."'>
+                              <td class='row-data'>".$row['stud_rollno']."</td>
+                              <td class='row-data'>".$row['stud_name']."</td>
+                              <td class='row-data'>".$row['stud_email']."</td>
+                              <td class='row-data'>".$row['stud_mob']."</td>
+                              <td>
+                                <button class='btn btn-success' type='submit' name='approve' onclick='show()'>Approve</button>&nbsp;
+                                <button class='btn btn-danger' type='submit' name='delete' onclick='show()'>Delete</button>
+                              </td>
+                            </tr>";
+                }
+
+              }
+            }
+            $msg.="<table>";
+            echo $msg;
+          ?>
+          <script>
+              function show() {
+                  var rowId = event.target.parentNode.parentNode.id;
+
+                  var data = document.getElementById(rowId).querySelectorAll(".row-data");
+                  var rollno = data[0].innerHTML;
+                  document.getElementById('rollno').value = rollno;
+              }
+          </script>
+      </div>
+      <div class="col-sm-2 text-left">
+      </div>
     </div>
-    <div class="col-sm-2 text-left">
-    </div>
-  </div>
+  </form>
   <hr>
 </div>
 

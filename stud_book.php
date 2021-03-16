@@ -1,3 +1,10 @@
+<?php
+  session_start();
+  if(!isset($_SESSION['stud_rollno'])){
+    header("location:login.php");
+  }
+  include_once('config.php');
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -63,7 +70,7 @@
       <ul class="nav navbar-nav">
         <li><a href="index_stud.php">Home</a></li>
         <li class="active"><a href="">Books</a></li>
-        <li><a href="stud_fine.php">Fine</a></li>
+        <li><a href="stud_issued.php">Issued Book</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="chnge_psswd.php"><span class="glyphicon glyphicon-lock"></span> Change Password</a></li>
@@ -81,120 +88,85 @@
     </div>
   </div>
   <br>
-  <div class="input-append" align="right" style="margin-right:35px;">
-    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
-      <option value="BookID">BookID</option>
-      <option value="BookName">Book Name</option>
-      <option value="Author">Author</option>
-      <option value="Publisher">Publisher</option>
-    </select>
-    <input type="text" placeholder="search by" id="" name=""/>
-    <button class="btn btn-info">Search</button>
-  </div>
+  <form class="" action="" method="post">
+    <div class="input-append" align="right" style="margin-right:35px;">
+      <select size="1" name="select" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="BookID">BookID</option>
+        <option value="BookName">Book Name</option>
+        <option value="Author">Author</option>
+        <option value="Publisher">Publisher</option>
+      </select>
+      <input type="text" placeholder="search by" id="searchby" name="searchby"/>
+      <button class="btn btn-info" name="search">Search</button>
+    </div>
 
-  <br>
-  <div class="row content" align="center">
-    <div class="col-sm-2 text-left">
-    </div>
-    <div class="col-sm-8 text-left">
-      <table>
-        <tr>
-          <th>Book ID</th>
-          <th>Title</th>
-          <th>Authors</th>
-          <th>Edition</th>
-          <th>Publisher</th>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-      </table>
-    </div>
-    <div class="col-sm-2 text-left">
-    </div>
-  </div>
-</div>
-<br><br>
-<div class="container-fluid text-center">
-  <div class="row content">
-    <div class="col-sm-12 text-left">
-      <h1>Issued Books</h1>
-      <hr>
-    </div>
-  </div>
-  <br>
-  <div class="input-append" align="right" style="margin-right:35px;">
-    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
-      <option value="BookID">BookID</option>
-      <option value="BookName">Book Name</option>
-      <option value="Author">Author</option>
-      <option value="Publisher">Publisher</option>
-    </select>
-    <input type="text" placeholder="search by" id="" name=""/>
-    <button class="btn btn-info">Search</button>
-  </div>
+    <br>
+    <div class="row content">
+      <div class="col-sm-2 text-left">
+      </div>
+      <div class="col-sm-8 text-left">
+        <input type="hidden" name="bookid" id="bookid">
+        <table>
+          <tr>
+            <th>BookID</th>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Edition</th>
+            <th>Publisher</th>
+          </tr>
+          <?php
+            if(isset($_REQUEST['search'])){
+              $index = 1;
+              $msg = "";
+              $value = $_REQUEST['searchby'];
+              if($_REQUEST['select']=='BookID'){
+                $var = 'book_id';
+              }
+              elseif($_REQUEST['select']=='BookName'){
+                $var = 'book_title';
+              }
+              elseif($_REQUEST['select']=='Author'){
+                $var = 'book_author';
+              }
+              else{
+                $var = 'book_publish';
+              }
+              $query = "SELECT * FROM Book WHERE $var='".$value."'";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $msg .= "<tr id='".$index++."'>
+                              <td class='row-data'>".$row['book_id']."</td>
+                              <td class='row-data'>".$row['book_title']."</td>
+                              <td class='row-data'>".$row['book_author']."</td>
+                              <td class='row-data'>".$row['book_editn']."</td>
+                              <td class='row-data'>".$row['book_publish']."</td>
+                            </tr>";
+                }
 
-  <br>
-  <div class="row content" align="center">
-    <div class="col-sm-2 text-left">
-    </div>
-    <div class="col-sm-8 text-left">
-      <table>
-        <tr>
-          <th>Book ID</th>
-          <th>Title</th>
-          <th>Authors</th>
-          <th>Edition</th>
-          <th>Publisher</th>
-          <th>Issued Date</th>
-          <th>Returned Date</th>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-      </table>
+              }
+            }
+            else{
+              $index = 1;
+              $msg = "";
+              $query = "SELECT * FROM Book";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $msg .= "<tr id='".$index++."'>
+                              <td class='row-data'>".$row['book_id']."</td>
+                              <td class='row-data'>".$row['book_title']."</td>
+                              <td class='row-data'>".$row['book_author']."</td>
+                              <td class='row-data'>".$row['book_editn']."</td>
+                              <td class='row-data'>".$row['book_publish']."</td>
+                            </tr>";
+                }
+
+              }
+            }
+            $msg.="<table>";
+            echo $msg;
+          ?>
     </div>
     <div class="col-sm-2 text-left">
     </div>

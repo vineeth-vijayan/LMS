@@ -1,3 +1,10 @@
+<?php
+  session_start();
+  if(!isset($_SESSION['stud_rollno'])){
+    header("location:login.php");
+  }
+  include_once('config.php');
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -61,14 +68,9 @@
     </div>
     <div class="collapse navbar-collapse" id="myNavbar">
       <ul class="nav navbar-nav">
-        <li><a href="index_admin.php">Home</a></li>
-        <li><a href="admin_book.php">Books</a></li>
-        <li><a href="admin_stud.php">Students</a></li>
-        <li><a href="admin_issue.php">Issue Book</a></li>
-        <li><a href="admin_return.php">Return Book</a></li>
-        <li><a href="admin_issued.php">Issued Book</a></li>
-        <li><a href="admin_appr.php">Approvals</a></li>
-        <li class="active"><a href="">Fines</a></li>
+        <li><a href="index_stud.php">Home</a></li>
+        <li><a href="stud_book.php">Books</a></li>
+        <li class="active"><a href="">Issued Book</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="chnge_psswd.php"><span class="glyphicon glyphicon-lock"></span> Change Password</a></li>
@@ -81,52 +83,54 @@
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-12 text-left">
-      <h1>Fine Amount</h1>
+      <h1>Issued Books</h1>
       <hr>
     </div>
   </div>
   <br>
-  <div class="input-append" align="right" style="margin-right:35px;">
-    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
-      <option value="RollNo">RollNo</option>
-      <option value="Student Name">Student Name</option>
-    </select>
-    <input type="text" placeholder="search by" id="" name=""/>
-    <button class="btn btn-info">Search</button>
-  </div>
-  <br>
-  <div class="row content">
+  <form class="" action="" method="post">
+    <br>
+    <div class="row content">
+      <div class="col-sm-2 text-left">
+      </div>
+      <div class="col-sm-8 text-left">
+        <input type="hidden" name="bookid" id="bookid">
+        <table>
+          <tr>
+            <th>BookID</th>
+            <th>Book Name</th>
+            <th>Issue Date</th>
+            <th>Return Date</th>
+          </tr>
+          <?php
+              $index = 1;
+              $msg = "";
+              $query = "SELECT * FROM BookIssue WHERE stud_rollno='".$_SESSION['stud_rollno']."'";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $book = mysqli_fetch_array(mysqli_query($con, "SELECT * FROM Book WHERE book_id = '".$row['book_id']."'"));
+                  $msg .= "<tr id='".$index++."'>
+                              <td>".$row['book_id']."</td>
+                              <td>".$book['book_title']."</td>
+                              <td>".date("d/m/Y", strtotime($row['issue_date']))."</td>";
+                  if($row['return_date']==NULL){
+                      $msg .= "<td><span style='color:red'>Not Returned</span></td></tr>";
+                  }
+                  else{
+                    $msg .= "<td>".date("d/m/Y", strtotime($row['return_date']))."</td></tr>";
+                  }
+                }
+              }
+            $msg.="<table>";
+            echo $msg;
+          ?>
+    </div>
     <div class="col-sm-2 text-left">
     </div>
-    <div class="col-sm-8 text-left">
-      <table>
-        <tr>
-          <th>Student Rollno</th>
-          <th>Student Name</th>
-          <th>FineAmount</th>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-        </tr>
-      </table>
-    </div>
-    <div class="col-sm-2 text-left">
-    </div>
   </div>
-  <hr>
 </div>
+<br><br>
 
 </body>
 </html>

@@ -1,3 +1,10 @@
+<?php
+  session_start();
+  if(!isset($_SESSION['admin_user'])){
+    header('location:login.php');
+  }
+  include_once('config.php');
+?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -77,7 +84,43 @@
     </div>
   </div>
 </nav>
-
+<?php
+  if(isset($_REQUEST['delete'])){
+    $bookid = $_REQUEST['bookid'];
+    $query = "DELETE FROM Book WHERE book_id='".$bookid."'";
+    mysqli_query($con, $query);
+    $msg = "<script>alert('Book Record Deleted Successfully!!');</script>";
+    echo $msg;
+  }
+  if(isset($_REQUEST['add'])){
+    $title = $_REQUEST['title'];
+    $author = $_REQUEST['author'];
+    $edition = $_REQUEST['edition'];
+    $publisher = $_REQUEST['publisher'];
+    $query = "SELECT * FROM Book ORDER BY book_id DESC LIMIT 1";
+    $result = mysqli_query($con, $query);
+    if(mysqli_num_rows($result)>0){
+      $row = mysqli_fetch_array($result);
+      $num = (int)substr($row['book_id'],4);
+      if($num<9){
+        $id = "ISBN00".($num+1);
+      }
+      elseif($num<99){
+        $id = "ISBN0".($num+1);
+      }
+      else{
+        $id = "ISBN".($num+1);
+      }
+      $query = "INSERT INTO Book VALUES('".$id."', '".$title."', '".$author."', '".$edition."', '".$publisher."', 0)";
+      mysqli_query($con, $query);
+    }
+    else{
+      $query = "INSERT INTO Book VALUES('ISBN001', '".$title."', '".$author."', '".$edition."', '".$publisher."', 0)";
+      mysqli_query($con, $query);
+    }
+    echo $bookid;
+  }
+?>
 <div class="container-fluid text-center">
   <div class="row content">
     <div class="col-sm-12 text-left">
@@ -86,88 +129,132 @@
     </div>
   </div>
   <br>
-  <div class="input-append" align="right" style="margin-right:35px;">
-    <select size="1" class="form-select form-select-sm" aria-label=".form-select-sm example">
-      <option value="BookID">BookID</option>
-      <option value="BookName">Book Name</option>
-      <option value="Author">Author</option>
-      <option value="Publisher">Publisher</option>
-    </select>
-    <input type="text" placeholder="search by" id="" name=""/>
-    <button class="btn btn-info">Search</button>
-  </div>
+  <form class="" action="" method="post">
+    <div class="input-append" align="right" style="margin-right:35px;">
+      <select size="1" name="select" class="form-select form-select-sm" aria-label=".form-select-sm example">
+        <option value="BookID">BookID</option>
+        <option value="BookName">Book Name</option>
+        <option value="Author">Author</option>
+        <option value="Publisher">Publisher</option>
+      </select>
+      <input type="text" placeholder="search by" id="searchby" name="searchby"/>
+      <button class="btn btn-info" name="search">Search</button>
+    </div>
 
-  <br>
-  <div class="row content">
-    <div class="col-sm-2 text-left">
-    </div>
-    <div class="col-sm-8 text-left">
-      <table>
-        <tr>
-          <th>BookID</th>
-          <th>Title</th>
-          <th>Authors</th>
-          <th>Edition</th>
-          <th>Publisher</th>
-          <th></th>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td><button class="btn btn-danger" type="button" name="delete">Delete</button></td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td><button class="btn btn-danger" type="button" name="delete">Delete</button></td>
-        </tr>
-        <tr>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td>.</td>
-          <td><button class="btn btn-danger" type="button" name="delete">Delete</button></td>
-        </tr>
-      </table>
-    </div>
-    <div class="col-sm-2 text-left">
-    </div>
-  </div>
-  <hr>
-  <div class="row content">
-    <div class="col-sm-2 text-left">
-    </div>
-    <div class="col-sm-10 text-left">
-      <div class="form-group row">
-        <div class="col-xs-2">
-          <label for="ex2">Title</label>
-          <input class="form-control" id="ex2" type="text">
-        </div>
-        <div class="col-xs-2">
-          <label for="ex2">Authors</label>
-          <input class="form-control" id="ex2" type="text">
-        </div>
-        <div class="col-xs-2">
-          <label for="ex2">Edition</label>
-          <input class="form-control" id="ex2" type="text">
-        </div>
-        <div class="col-xs-2">
-          <label for="ex2">Publisher</label>
-          <input class="form-control" id="ex2" type="text">
-        </div>
-        <div class="col-xs-2" style="margin-top:2%;">
-          <button class="btn btn-success" type="button" name="add">Add</button>
-        </div>
+    <br>
+    <div class="row content">
+      <div class="col-sm-2 text-left">
+      </div>
+      <div class="col-sm-8 text-left">
+        <input type="hidden" name="bookid" id="bookid">
+        <table>
+          <tr>
+            <th>BookID</th>
+            <th>Title</th>
+            <th>Authors</th>
+            <th>Edition</th>
+            <th>Publisher</th>
+            <th></th>
+          </tr>
+          <?php
+            if(isset($_REQUEST['search'])){
+              $index = 1;
+              $msg = "";
+              $value = $_REQUEST['searchby'];
+              if($_REQUEST['select']=='BookID'){
+                $var = 'book_id';
+              }
+              elseif($_REQUEST['select']=='BookName'){
+                $var = 'book_title';
+              }
+              elseif($_REQUEST['select']=='Author'){
+                $var = 'book_author';
+              }
+              else{
+                $var = 'book_publish';
+              }
+              $query = "SELECT * FROM Book WHERE $var='".$value."'";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $msg .= "<tr id='".$index++."'>
+                              <td class='row-data'>".$row['book_id']."</td>
+                              <td class='row-data'>".$row['book_title']."</td>
+                              <td class='row-data'>".$row['book_author']."</td>
+                              <td class='row-data'>".$row['book_editn']."</td>
+                              <td class='row-data'>".$row['book_publish']."</td>
+                              <td><button class='btn btn-danger' type='submit' name='delete' onclick='show()'>Delete</button></td>
+                            </tr>";
+                }
+
+              }
+            }
+            else{
+              $index = 1;
+              $msg = "";
+              $query = "SELECT * FROM Book";
+              $result = mysqli_query($con, $query);
+              if(mysqli_num_rows($result)>0){
+                while($row = mysqli_fetch_assoc($result)){
+                  $msg .= "<tr id='".$index++."'>
+                              <td class='row-data'>".$row['book_id']."</td>
+                              <td class='row-data'>".$row['book_title']."</td>
+                              <td class='row-data'>".$row['book_author']."</td>
+                              <td class='row-data'>".$row['book_editn']."</td>
+                              <td class='row-data'>".$row['book_publish']."</td>
+                              <td><button class='btn btn-danger' type='submit' name='delete' onclick='show()'>Delete</button></td>
+                            </tr>";
+                }
+
+              }
+            }
+            $msg.="<table>";
+            echo $msg;
+          ?>
+          <script>
+              function show() {
+                  var rowId = event.target.parentNode.parentNode.id;
+
+                  var data = document.getElementById(rowId).querySelectorAll(".row-data");
+                  var bookid = data[0].innerHTML;
+                  document.getElementById('bookid').value = bookid;
+              }
+          </script>
+      </div>
+      <div class="col-sm-2 text-left">
       </div>
     </div>
+    <hr>
+  </form>
+  <div class="row content">
+    <div class="col-sm-12 text-left">
+      <form class="" action="" method="post">
+        <div class="form-group row">
+          <div class="col-xs-3">
+            <label for="ex2">Title</label>
+            <input class="form-control" name="title" id="title" type="text">
+          </div>
+          <div class="col-xs-3">
+            <label for="ex2">Authors</label>
+            <input class="form-control" name="author" id="author" type="text">
+          </div>
+          <div class="col-xs-2">
+            <label for="ex2">Edition</label>
+            <input class="form-control" name="edition" id="edtion" type="text">
+          </div>
+          <div class="col-xs-3">
+            <label for="ex2">Publisher</label>
+            <input class="form-control" name="publisher" id="publisher" type="text">
+          </div>
+          <div class="col-xs-1" style="margin-top:2%;">
+            <button class="btn btn-success" type="submit" name="add">Add</button>
+          </div>
+        </div>
+      </form>
+      <br><br><br>
+    </div>
   </div>
+
 </div>
 
 </body>
